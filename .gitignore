@@ -1,0 +1,7 @@
+target/
+*.iml
+.idea/
+testimg/
+out/
+images/
+src/main/resources/audioWords
