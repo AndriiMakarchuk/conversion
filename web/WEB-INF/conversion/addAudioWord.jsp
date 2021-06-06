@@ -69,8 +69,9 @@
                                                 <p class="text-danger mt-3">${errorMessage}</p>
                                             </c:if>
                                         </c:if>
-                                        <c:if test="${param.get('type') != 'update'}">
-                                            <label for="wordName" class="form-label">Update "${wordName}" Word</label>
+                                        <c:if test="${param.get('type') == 'update'}">
+                                            <label for="wordName" class="form-label">Update "${param.get("wordName")}" Word</label>
+<%--                                            <input name="wordName" type="hidden" class="form-control mb-3" id="wordName" value="${wordName}" required>--%>
                                         </c:if>
                                     </div>
                                     <div class="form-group">

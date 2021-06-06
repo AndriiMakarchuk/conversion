@@ -16,18 +16,8 @@ import java.util.stream.Stream;
 public class ProjectConfigScript {
 
     public static void main(String[] args) {
-        String rootPath = Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("")
-                .getPath().replaceFirst("/", "") + "audioWords\\";
-        String s[] = rootPath.split("/");
-        for (String s1:
-             s) {
-            System.out.println(s1);
-        }
-
-//        createAudioWordRecords();
-//        createWordEndRecords();
+        createAudioWordRecords();
+        createWordEndRecords();
     }
 
     public static void createAudioWordRecords() {
@@ -51,6 +41,7 @@ public class ProjectConfigScript {
                 temp.setWordString(srt[srt.length - 1].replaceAll("\\.mp3", ""));
                 temp.setAudioWordStream(inp);
                 temp.setStandard(true);
+                temp.setCreatedBy(1);
                 audioWords.add(temp);
             }
             AudioWordDAO dao = new AudioWordDAO();

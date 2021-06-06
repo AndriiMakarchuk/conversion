@@ -12,7 +12,7 @@ public class LoginFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         if ("active".equals(req.getServletContext().getAttribute("active"))) {
-            ((HttpServletResponse) resp).sendRedirect("/conversion");
+            ((HttpServletResponse) resp).sendRedirect("/controller/conversion");
             return;
         }
         chain.doFilter(req, resp);

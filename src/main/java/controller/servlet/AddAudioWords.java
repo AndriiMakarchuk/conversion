@@ -1,8 +1,8 @@
 package controller.servlet;
 
 import controller.RandomFileNameController;
-import conversion.Conversion;
-import conversion.ConversionTXTToMP3;
+import controller.conversion.Conversion;
+import controller.conversion.ConversionTXTToMP3;
 import model.dao.AudioWordDAO;
 import model.dao.ConversionDAO;
 import model.entity.ConversionRecord;
@@ -16,7 +16,6 @@ import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -75,7 +74,6 @@ public class AddAudioWords extends HttpServlet {
         HttpSession userSession = req.getSession();
         User user = (User) userSession.getAttribute("user");
         InputStream inputStream = (InputStream) userSession.getAttribute("inputStream");
-        conversion.setCreatedDate(Date.valueOf(LocalDate.now()));
         conversion.setConverted(false);
         conversion.setError(false);
         conversion.setCreatedBy(user.getId());

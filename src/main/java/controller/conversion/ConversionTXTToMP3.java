@@ -1,4 +1,4 @@
-package conversion;
+package controller.conversion;
 
 import model.dao.ConversionDAO;
 import model.dao.WordEndDAO;
@@ -7,8 +7,6 @@ import model.entity.audioWord.AudioWord;
 import model.entity.audioWord.WordEnd;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
 

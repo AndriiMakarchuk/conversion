@@ -35,7 +35,6 @@ public class AudioWordList extends HttpServlet {
 
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/conversion/audioWordList.jsp");
         requestDispatcher.forward(req, resp);
-        //checkAdminAccess(req, resp, "WEB-INF/conversion/audioWordList.jsp", "/conversion");
     }
 
     @Override

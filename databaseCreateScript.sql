@@ -2,12 +2,12 @@ SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
 
-CREATE SCHEMA IF NOT EXISTS conversion DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
-USE conversion ;
+CREATE SCHEMA IF NOT EXISTS controller.conversion DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE controller.conversion ;
 
-drop table if exists conversion.word_end;
+drop table if exists controller.conversion.word_end;
 
-create table if not exists conversion.word_end
+create table if not exists controller.conversion.word_end
 (
     id       int auto_increment
         primary key,
@@ -16,9 +16,9 @@ create table if not exists conversion.word_end
     end_blob longblob     null
 );
 
-drop table if exists conversion.user_details;
+drop table if exists controller.conversion.user_details;
 
-create table if not exists conversion.user_details
+create table if not exists controller.conversion.user_details
 (
     id         int auto_increment
         primary key,
@@ -28,9 +28,9 @@ create table if not exists conversion.user_details
     phone      varchar(255) null
 );
 
-drop table if exists conversion.profile;
+drop table if exists controller.conversion.profile;
 
-create table if not exists conversion.profile
+create table if not exists controller.conversion.profile
 (
     id             int auto_increment
         primary key,
@@ -38,9 +38,9 @@ create table if not exists conversion.profile
     developer_name varchar(120) not null
 );
 
-drop table if exists conversion.user1;
+drop table if exists controller.conversion.user1;
 
-create table if not exists conversion.user1
+create table if not exists controller.conversion.user1
 (
     id              int auto_increment,
     profile_id      int         not null,
@@ -60,9 +60,9 @@ create table if not exists conversion.user1
 alter table user1
     add primary key (id);
 
-drop table if exists conversion.conversion_record;
+drop table if exists controller.conversion.conversion_record;
 
-create table if not exists conversion.conversion_record
+create table if not exists controller.conversion.conversion_record
 (
     id                          int auto_increment
         primary key,
@@ -79,9 +79,9 @@ create table if not exists conversion.conversion_record
         foreign key (created_by) references user1 (id)
 );
 
-drop table if exists conversion.audio_word;
+drop table if exists controller.conversion.audio_word;
 
-create table if not exists conversion.audio_word
+create table if not exists controller.conversion.audio_word
 (
     id              int auto_increment
         primary key,

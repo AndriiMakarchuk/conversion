@@ -16,7 +16,7 @@ public class SQLQuery {
             "values (?, ?, ?, ?, ?, ?);";
 
     public static final String INSERT_CONVERSION = "insert into " +
-            "conversion_record (file_name, conversion_source_type, conversion_destination_type, created_date, is_converted, is_error, created_by, source_file_blob) " +
+            "conversion_record (file_name, conversion_source_type, conversion_destination_type, is_converted, is_error, created_by, source_file_blob, created_date) " +
             "values (?, ?, ?, ?, ?, ?, ?, ?);";
 
     public static final String INSERT_WORD_END = "insert into " +
@@ -71,6 +71,7 @@ public class SQLQuery {
 
     public static final String DELETE_CONVERSION_BY_ID = "delete from conversion_record where id = ?;";
 
+    public static final String DELETE_CONVERSIONS_BY_CREATE_DATE = "delete from conversion_record where created_date < ?;";
 
     public static final String DELETE_AUDIO_WORD_BY_ID = "delete from audio_word where id = ?;";
 

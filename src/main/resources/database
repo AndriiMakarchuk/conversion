@@ -1,4 +1,4 @@
-CONNECTION_URL = jdbc:mysql://127.0.0.1:3306/databasename?allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=UTC&useSSL=false
+CONNECTION_URL = jdbc:mysql://127.0.0.1:3306/conversion?allowPublicKeyRetrieval=true&useUnicode=true&serverTimezone=UTC&useSSL=false
 USER = root
 PASSWORD = 1111
 DRIVER = com.mysql.jdbc.Driver

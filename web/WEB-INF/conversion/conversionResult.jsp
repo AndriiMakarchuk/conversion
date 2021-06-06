@@ -82,7 +82,8 @@
                     <c:forEach items="${conversions}" var="conversion">
                         <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="blog-post">
-                                <label for="${conversion.id}" class="form-label">File "${conversion.fileName}"</label>
+                                <label for="${conversion.id}" class="form-label">File
+                                    "${conversion.fileName}"</label>
                                 <audio id="${conversion.id}" controls name="media">
                                     <source src="data:audio/mp3;base64,${conversion.destinationFileBase64}"
                                             type="audio/mpeg">

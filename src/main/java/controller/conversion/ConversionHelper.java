@@ -1,4 +1,4 @@
-package conversion;
+package controller.conversion;
 
 import model.dao.AudioWordDAO;
 import model.entity.audioWord.AudioWord;

@@ -1,9 +1,7 @@
 package model.entity;
 
 import java.io.InputStream;
-import java.sql.Blob;
-import java.sql.Date;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Base64;
 
 public class ConversionRecord {
@@ -11,7 +9,8 @@ public class ConversionRecord {
     private String fileName;
     private String conversionSourceType;
     private String conversionDestinationType;
-    private Date createdDate;
+    private Timestamp createdDate;
+
     private Boolean isConverted;
     private Boolean isError;
     private int createdBy;
@@ -53,11 +52,11 @@ public class ConversionRecord {
         this.conversionDestinationType = conversionDestinationType;
     }
 
-    public Date getCreatedDate() {
+    public Timestamp getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
+    public void setCreatedDate(Timestamp createdDate) {
         this.createdDate = createdDate;
     }
 

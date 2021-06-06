@@ -38,11 +38,11 @@ public class ConversionDAO extends AbstractDAO{
             preparedStatement.setString(1, conversion.getFileName());
             preparedStatement.setString(2, conversion.getConversionSourceType());
             preparedStatement.setString(3, conversion.getConversionDestinationType());
-            preparedStatement.setDate(4, conversion.getCreatedDate());
-            preparedStatement.setBoolean(5, conversion.getConverted());
-            preparedStatement.setBoolean(6, conversion.getError());
-            preparedStatement.setInt(7, conversion.getCreatedBy());
-            preparedStatement.setBlob(8, conversion.getSourceFileStream());
+            preparedStatement.setBoolean(4, conversion.getConverted());
+            preparedStatement.setBoolean(5, conversion.getError());
+            preparedStatement.setInt(6, conversion.getCreatedBy());
+            preparedStatement.setBlob(7, conversion.getSourceFileStream());
+            preparedStatement.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
 
             preparedStatement.execute();
             try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
@@ -69,6 +69,28 @@ public class ConversionDAO extends AbstractDAO{
             preparedStatement = connection.prepareStatement(DELETE_CONVERSION_BY_ID);
 
             preparedStatement.setInt(1, conversionId);
+
+            preparedStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        } finally {
+            close(preparedStatement);
+        }
+    }
+
+    public void deleteConversion(Timestamp createdDate) {
+        try {
+            preparedStatement = connection.prepareStatement(DELETE_CONVERSIONS_BY_CREATE_DATE);
+
+            preparedStatement.setTimestamp(1, createdDate);
 
             preparedStatement.executeUpdate();
             connection.commit();
@@ -157,7 +179,7 @@ public class ConversionDAO extends AbstractDAO{
         conversion.setConversionSourceType(resultSet.getString("conversion_source_type"));
         conversion.setConversionDestinationType(resultSet.getString("conversion_destination_type"));
         conversion.setFileName(resultSet.getString("file_name"));
-        conversion.setCreatedDate(resultSet.getDate("created_date"));
+        conversion.setCreatedDate(resultSet.getTimestamp("created_date"));
         conversion.setCreatedBy(resultSet.getInt("created_by"));
         conversion.setError(resultSet.getBoolean("is_error"));
         conversion.setConverted(resultSet.getBoolean("is_converted"));

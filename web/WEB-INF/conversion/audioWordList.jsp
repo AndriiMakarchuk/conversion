@@ -66,6 +66,7 @@
                                         <source src="data:audio/mp3;base64,${word.base64}" type="audio/mpeg">
                                     </audio>
                                     <input type="hidden" name="wordId" class="btn btn-sm btn-dark" value="${word.id}">
+                                    <input type="hidden" name="wordName" class="btn btn-sm btn-dark" value="${word.wordString}">
                                     <div>
                                         <button type="submit" name="action" class="btn pull-right" value="Upload New Audio File" style="margin-top: 10px">Upload New Audio File</button>
                                         <button type="submit" name="action" class="btn pull-right" value="Delete" style="margin-top: 10px">Delete</button>

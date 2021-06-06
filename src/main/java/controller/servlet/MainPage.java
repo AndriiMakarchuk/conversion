@@ -1,6 +1,6 @@
 package controller.servlet;
 
-import conversion.ConversionHelper;
+import controller.conversion.ConversionHelper;
 import model.entity.user.User;
 
 import java.io.InputStream;
@@ -18,7 +18,7 @@ public class MainPage extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if(req.getParameter("action").equals("conversion")) {
+        if(req.getParameter("action").equals("/conversion")) {
             Part part = req.getPart("conversionFile");
             InputStream inputStream = part.getInputStream();
 
