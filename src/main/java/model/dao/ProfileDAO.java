@@ -1,26 +1,18 @@
 package model.dao;
 
-import static model.DBManager.*;
 import static model.dao.SQLQuery.*;
 
 import model.entity.user.Profile;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProfileDAO {
+public class ProfileDAO extends AbstractDAO{
     public Profile getProfile(int id) {
         Profile profile = null;
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_PROFILE_BY_ID);
-            pStatement.setInt(1, id);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_PROFILE_BY_ID);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 profile = new Profile();
                 profile.setId(resultSet.getInt("id"));
@@ -33,22 +25,17 @@ public class ProfileDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         return profile;
     }
 
     public Profile getProfile(String developerName) {
         Profile profile = null;
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_PROFILE_BY_DEVELOPER_NAME);
-            pStatement.setString(1, developerName);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_PROFILE_BY_DEVELOPER_NAME);
+            preparedStatement.setString(1, developerName);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 profile = new Profile();
                 profile.setId(resultSet.getInt("id"));
@@ -61,21 +48,9 @@ public class ProfileDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         return profile;
-    }
-
-
-    private void close(AutoCloseable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 
 }

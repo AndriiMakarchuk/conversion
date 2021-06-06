@@ -6,40 +6,34 @@ import model.entity.user.UserDetails;
 
 import java.sql.*;
 
-import static model.DBManager.*;
 import static model.dao.SQLQuery.*;
 
-public class UserDAO {
+public class UserDAO extends AbstractDAO{
 
     public void insertUser(User user) {
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
 
-            pStatement = connection.prepareStatement(INSERT_USER_DETAILS, Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement(INSERT_USER_DETAILS, Statement.RETURN_GENERATED_KEYS);
 
             UserDetails details = user.getDetails();
-            pStatement.setString(1, details.getFirstName());
-            pStatement.setString(2, details.getLastName());
-            pStatement.setString(3, details.getEmail());
-            pStatement.setString(4, details.getPhone());
-            pStatement.executeUpdate();
+            preparedStatement.setString(1, details.getFirstName());
+            preparedStatement.setString(2, details.getLastName());
+            preparedStatement.setString(3, details.getEmail());
+            preparedStatement.setString(4, details.getPhone());
+            preparedStatement.executeUpdate();
 
-            resultSet = pStatement.getGeneratedKeys();
-            pStatement = connection.prepareStatement(INSERT_USER);
-            pStatement.setString(1, user.getLogin());
-            pStatement.setString(2, user.getPassword());
-            pStatement.setInt(3, user.getProfile().getId());
+            resultSet = preparedStatement.getGeneratedKeys();
+            preparedStatement = connection.prepareStatement(INSERT_USER);
+            preparedStatement.setString(1, user.getLogin());
+            preparedStatement.setString(2, user.getPassword());
+            preparedStatement.setInt(3, user.getProfile().getId());
 
             if (resultSet.next()) {
-                pStatement.setInt(4, resultSet.getInt(1));
+                preparedStatement.setInt(4, resultSet.getInt(1));
             } else {
                 throw new SQLException();
             }
-            pStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
 
         } catch (SQLException e) {
@@ -52,21 +46,16 @@ public class UserDAO {
             }
             e.printStackTrace();
         } finally {
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
     }
 
     public User getUser(String login) throws SQLException {
         User user = new User();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_USER_BY_LOGIN);
-            pStatement.setString(1, login);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_USER_BY_LOGIN);
+            preparedStatement.setString(1, login);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 mapUser(user, resultSet);
             } else {
@@ -74,22 +63,17 @@ public class UserDAO {
             }
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         return user;
     }
 
     public User getUser(int id) {
         User user = new User();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_USER_BY_ID);
-            pStatement.setInt(1, id);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_USER_BY_ID);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 mapUser(user, resultSet);
             } else {
@@ -99,8 +83,7 @@ public class UserDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         return user;
     }
@@ -110,20 +93,18 @@ public class UserDAO {
         user.setLogin(resultSet.getString("login"));
         user.setPassword(resultSet.getString("password1"));
         int profileId = resultSet.getInt("profile_id");
-        Profile profile = new ProfileDAO().getProfile(profileId);
+        ProfileDAO profileDAO = new ProfileDAO();
+        Profile profile = profileDAO.getProfile(profileId);
+        profileDAO.close();
         user.setProfile(profile);
         user.setUserDetailsId(resultSet.getInt("user_details_id"));
     }
 
     public void getUserDetails(User user) {
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_USER_DETAILS_BY_ID);
-            pStatement.setInt(1, user.getUserDetailsId());
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_USER_DETAILS_BY_ID);
+            preparedStatement.setInt(1, user.getUserDetailsId());
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 UserDetails details = new UserDetails();
                 details.setFirstName(resultSet.getString("first_name"));
@@ -138,18 +119,7 @@ public class UserDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
-        }
-    }
-
-    private void close(AutoCloseable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            close(preparedStatement);
         }
     }
 

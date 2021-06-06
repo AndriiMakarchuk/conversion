@@ -1,7 +1,6 @@
 package model.dao;
 
 import model.entity.ConversionRecord;
-import model.entity.audioWord.AudioWord;
 
 import java.io.InputStream;
 import java.sql.*;
@@ -9,20 +8,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static model.DBManager.getInstance;
 import static model.dao.SQLQuery.*;
 
-public class ConversionDAO {
+public class ConversionDAO extends AbstractDAO{
     public ConversionRecord getConversion(int id) {
         ConversionRecord conversion = new ConversionRecord();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_CONVERSION_BY_ID);
-            pStatement.setInt(1, id);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_CONVERSION_BY_ID);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 mapConversion(conversion, resultSet);
             } else {
@@ -32,39 +26,30 @@ public class ConversionDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         return conversion;
     }
 
     public void insertConversion(ConversionRecord conversion) {
-        Connection connection = null;
-        PreparedStatement pStatement = null;
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
-            System.out.println(connection);
-            pStatement = connection.prepareStatement(INSERT_CONVERSION, new String[] { "id" });
+            preparedStatement = connection.prepareStatement(INSERT_CONVERSION, new String[] { "id" });
 
-            pStatement.setString(1, conversion.getFileName());
-            pStatement.setString(2, conversion.getConversionSourceType());
-            pStatement.setString(3, conversion.getConversionDestinationType());
-            pStatement.setDate(4, conversion.getCreatedDate());
-            pStatement.setBoolean(5, conversion.getConverted());
-            pStatement.setBoolean(6, conversion.getError());
-            pStatement.setInt(7, conversion.getCreatedBy());
-            pStatement.setBlob(8, conversion.getSourceFileStream());
+            preparedStatement.setString(1, conversion.getFileName());
+            preparedStatement.setString(2, conversion.getConversionSourceType());
+            preparedStatement.setString(3, conversion.getConversionDestinationType());
+            preparedStatement.setDate(4, conversion.getCreatedDate());
+            preparedStatement.setBoolean(5, conversion.getConverted());
+            preparedStatement.setBoolean(6, conversion.getError());
+            preparedStatement.setInt(7, conversion.getCreatedBy());
+            preparedStatement.setBlob(8, conversion.getSourceFileStream());
 
-            int affectedRows = pStatement.executeUpdate();
-            System.out.println(connection);
-            System.out.println(affectedRows);
-            try (ResultSet keys = pStatement.getGeneratedKeys()) {
+            preparedStatement.execute();
+            try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
                 keys.next();
                 conversion.setId(keys.getInt(1));
             }
             connection.commit();
-
         } catch (SQLException e) {
             if (connection != null) {
                 try {
@@ -75,36 +60,17 @@ public class ConversionDAO {
             }
             e.printStackTrace();
         } finally {
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
     }
 
-    public static void main(String[] args) {
-        ConversionRecord conversionRecord = new ConversionRecord();
-        conversionRecord.setCreatedDate(Date.valueOf(LocalDate.now()));
-        conversionRecord.setConverted(false);
-        conversionRecord.setError(false);
-        conversionRecord.setCreatedBy(2);
-        conversionRecord.setFileName("test");
-        conversionRecord.setConversionSourceType("txt");
-        conversionRecord.setConversionDestinationType("mp3");
-        new ConversionDAO().insertConversion(conversionRecord);
-    }
-
     public void deleteConversion(int conversionId) {
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(DELETE_CONVERSION_BY_ID);
 
-            pStatement = connection.prepareStatement(DELETE_CONVERSION_BY_ID);
+            preparedStatement.setInt(1, conversionId);
 
-            pStatement.setInt(1, conversionId);
-
-            pStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
             if (connection != null) {
@@ -116,21 +82,16 @@ public class ConversionDAO {
             }
             e.printStackTrace();
         } finally {
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
     }
 
     public List<ConversionRecord> getConversions(int userId) {
         List<ConversionRecord> conversionRecords = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_CONVERSION_BY_USER);
-            pStatement.setInt(1, userId);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_CONVERSION_BY_USER);
+            preparedStatement.setInt(1, userId);
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 ConversionRecord record = new ConversionRecord();
                 mapConversion(record, resultSet);
@@ -140,28 +101,19 @@ public class ConversionDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
-        System.out.println(conversionRecords);
         return conversionRecords;
     }
 
     public void updateConversion(int conversionId, boolean isConverted, boolean isError) {
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(UPDATE_CONVERSION_BY_ID);
+            preparedStatement.setBoolean(1, isConverted);
+            preparedStatement.setBoolean(2, isError);
+            preparedStatement.setInt(3, conversionId);
 
-            pStatement = connection.prepareStatement(UPDATE_CONVERSION_BY_ID);
-
-            pStatement.setBoolean(1, isConverted);
-            pStatement.setBoolean(2, isError);
-            pStatement.setInt(3, conversionId);
-
-            pStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
             if (connection != null) {
@@ -173,25 +125,18 @@ public class ConversionDAO {
             }
             e.printStackTrace();
         } finally {
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
     }
 
     public void updateConversionDestinationFile(int conversionId, InputStream inputStream) {
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(UPDATE_CONVERSION_DESTINATION_BLOB_BY_ID);
 
-            pStatement = connection.prepareStatement(UPDATE_CONVERSION_DESTINATION_BLOB_BY_ID);
+            preparedStatement.setBlob(1, inputStream);
+            preparedStatement.setInt(2, conversionId);
 
-            pStatement.setBlob(1, inputStream);
-            pStatement.setInt(2, conversionId);
-
-            pStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
             if (connection != null) {
@@ -203,8 +148,7 @@ public class ConversionDAO {
             }
             e.printStackTrace();
         } finally {
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
     }
 
@@ -218,15 +162,5 @@ public class ConversionDAO {
         conversion.setError(resultSet.getBoolean("is_error"));
         conversion.setConverted(resultSet.getBoolean("is_converted"));
         conversion.setDestinationFileBlob(resultSet.getBlob("destination_file_blob"));
-    }
-
-    private void close(AutoCloseable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

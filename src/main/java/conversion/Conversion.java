@@ -1,6 +1,9 @@
 package conversion;
 
-public interface Conversion {
-    void convert();
+public abstract class Conversion {
+    public abstract void convert();
 
+    public Conversion() {
+
+    }
 }

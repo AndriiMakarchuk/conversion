@@ -12,7 +12,7 @@ public class AdministratorFilter implements Filter{
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         Object profileId = req.getServletContext().getAttribute("profileId");
-        if (profileId == null || (Integer) profileId != 1) {
+        if ((profileId == null || (Integer) profileId != 1) && !"personal".equals(req.getParameter("name"))) {
             ((HttpServletResponse) resp).sendRedirect("/conversion");
             return;
         }

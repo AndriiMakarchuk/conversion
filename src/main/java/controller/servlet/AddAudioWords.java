@@ -1,6 +1,7 @@
 package controller.servlet;
 
 import controller.RandomFileNameController;
+import conversion.Conversion;
 import conversion.ConversionTXTToMP3;
 import model.dao.AudioWordDAO;
 import model.dao.ConversionDAO;
@@ -54,13 +55,17 @@ public class AddAudioWords extends HttpServlet {
     }
 
     private void createAudioWord(HttpServletRequest request, String wordName) throws ServletException, IOException {
+        User user = (User) request.getSession().getAttribute("user");
         AudioWordDAO audioWordDAO = new AudioWordDAO();
         AudioWord audioWord = new AudioWord();
         audioWord.setWordString(wordName);
         audioWord.setLanguage("English");
         audioWord.setExtension(".mp3");
+        audioWord.setStandard(false);
+        audioWord.setCreatedBy(user.getId());
         audioWord.setAudioWordStream(request.getPart(wordName).getInputStream());
         audioWordDAO.insertAudioWord(audioWord);
+        audioWordDAO.close();
     }
 
     private ConversionRecord doConversion(HttpServletRequest req) throws IOException {
@@ -81,7 +86,10 @@ public class AddAudioWords extends HttpServlet {
 
         ConversionDAO conversionDAO = new ConversionDAO();
         conversionDAO.insertConversion(conversion);
-        ConversionTXTToMP3 conversionTXTToMP3 = new ConversionTXTToMP3(conversion);
+        conversionDAO.close();
+        boolean useStandardWords = Boolean.parseBoolean(String.valueOf(userSession.getAttribute("useStandard")));
+
+        Conversion conversionTXTToMP3 = new ConversionTXTToMP3(conversion, user.getId(), useStandardWords);
         final AsyncContext asyncContext = req.startAsync();
         asyncContext.start(new Runnable() {
             public void run() {

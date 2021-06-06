@@ -50,7 +50,7 @@
         <nav id="mainmenu" class="mainmenu">
             <ul>
                 <li class="logo-wrapper">
-                    <a href="index.html">
+                    <a href="/conversion">
                         <img alt="Conversion Logo">
                     </a>
                 </li>
@@ -58,15 +58,18 @@
                     <a href="/conversion">Conversion</a>
                 </li>
                 <li>
+                    <a href="/audioWordList?name=personal">My Dictionary</a>
+                </li>
+                <li>
                     <a href="/conversionResult">Conversion Result</a>
                 </li>
                 <c:if test="${sessionScope.user.profile.developerName == 'Administrator'}">
                     <li>
-                        <a href="/audioWordList">Word List</a>
+                        <a href="/audioWordList?name=standard">Standard Dictionary</a>
                     </li>
-                    <li>
-                        <a href="/addAudioWord">Add Word</a>
-                    </li>
+<%--                    <li>--%>
+<%--                        <a href="/addAudioWord">Add Word</a>--%>
+<%--                    </li>--%>
                 </c:if>
             </ul>
         </nav>

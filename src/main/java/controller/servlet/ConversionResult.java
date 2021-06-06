@@ -24,6 +24,7 @@ public class ConversionResult extends HttpServlet {
             User user = (User) userSession.getAttribute("user");
             ConversionDAO conversionDAO = new ConversionDAO();
             List<ConversionRecord> conversionRecordList = conversionDAO.getConversions(user.getId());
+            conversionDAO.close();
             req.setAttribute("conversions", conversionRecordList);
             RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/conversion/conversionResult.jsp");
             requestDispatcher.forward(req, resp);

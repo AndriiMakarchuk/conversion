@@ -1,33 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%--<html>--%>
-<%--<head>--%>
-<%--    <meta charset="utf-8">--%>
-<%--    <meta name="viewport" content="width=device-width, initial-scale=1">--%>
-
-<%--    <link rel="stylesheet" href="style/styleRegistration.css">--%>
-<%--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"--%>
-<%--          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">--%>
-<%--    <title>Conversion</title>--%>
-<%--</head>--%>
-<%--<body>--%>
-<%--<h3>Upload unknown words</h3>--%>
-<%--<form style="width: 400px; margin: auto; padding: 30px;" method="post" enctype="multipart/form-data">--%>
-<%--    <c:forEach items="${unknownWords}" var="word">--%>
-<%--        <label class="form-label">File for "${word}" word</label>--%>
-<%--        <input name="${word}" accept=".mp3" type="file" class="form-control mb-3" required><br/>--%>
-<%--    </c:forEach>--%>
-<%--    <div>--%>
-<%--        <input type="submit" name="action" class="btn btn-sm btn-dark" value="uploadWordFiles" style="width: 270px;">--%>
-<%--    </div>--%>
-<%--</form>--%>
-<%--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"--%>
-<%--        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"--%>
-<%--        crossorigin="anonymous"></script>--%>
-<%--</body>--%>
-<%--</html>--%>
-
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -38,9 +11,6 @@
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,600,800" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-    <%--    <link rel="stylesheet" href="styles/bootstrap.min.css">--%>
-    <%--    <link rel="stylesheet" href="styles/icomoon-social.css">--%>
-
 
     <link rel="stylesheet" href="styles/main.css">
 </head>
@@ -59,7 +29,7 @@
         <nav id="mainmenu" class="mainmenu">
             <ul>
                 <li class="logo-wrapper">
-                    <a href="index.html">
+                    <a href="/conversion">
                         <img  alt="Conversion Logo">
                     </a>
                 </li>
@@ -67,15 +37,18 @@
                     <a href="/conversion">Conversion</a>
                 </li>
                 <li>
+                    <a href="/audioWordList?name=personal">My Dictionary</a>
+                </li>
+                <li>
                     <a href="/conversionResult">Conversion Result</a>
                 </li>
                 <c:if test="${sessionScope.user.profile.developerName == 'Administrator'}">
                     <li>
-                        <a href="/audioWordList">Word List</a>
+                        <a href="/audioWordList?name=standard">Standard Dictionary</a>
                     </li>
-                    <li>
-                        <a href="/addAudioWord">Add Word</a>
-                    </li>
+<%--                    <li>--%>
+<%--                        <a href="/addAudioWord">Add Word</a>--%>
+<%--                    </li>--%>
                 </c:if>
             </ul>
         </nav>

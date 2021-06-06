@@ -22,19 +22,13 @@
         <nav id="mainmenu" class="mainmenu">
             <ul>
                 <li class="logo-wrapper">
-                    <a href="index.html">
+                    <a href="/conversion">
                         <img  alt="Conversion Logo">
                     </a>
                 </li>
                 <li>
                     <a href="/conversion">Conversion</a>
                 </li>
-<%--                <li>--%>
-<%--                    <a href="/audioWordList">Word List</a>--%>
-<%--                </li>--%>
-<%--                <li>--%>
-<%--                    <a href="/addAudioWord">Add Word</a>--%>
-<%--                </li>--%>
             </ul>
         </nav>
     </div>

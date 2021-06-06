@@ -1,6 +1,6 @@
 package controller.servlet;
 
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,10 +18,10 @@ public class TestServlet extends HttpServlet {
         list.add("item1");
         list.add("item2");
         list.add("item3");
-        String json = new Gson().toJson(list);
-
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(json);
+//        String json = new Gson().toJson(list);
+//
+//        resp.setContentType("application/json");
+//        resp.setCharacterEncoding("UTF-8");
+//        resp.getWriter().write(json);
     }
 }

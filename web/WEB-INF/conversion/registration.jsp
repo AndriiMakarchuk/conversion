@@ -1,6 +1,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<html lang="en">
 <body>
 <head>
     <meta charset="utf-8">
@@ -13,10 +13,7 @@
     <link rel="stylesheet" href="styles/icomoon-social.css">
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,700,600,800" rel="stylesheet" type="text/css">
 
-    <%--    <link rel="stylesheet" href="styles/leaflet.css">--%>
-    <%--    <link rel="stylesheet" href="styles/leaflet.ie.css" />--%>
     <link rel="stylesheet" href="styles/main.css">
-    <%--    <script src="js/modernizr-2.6.2-respond-1.1.0.min.js"></script>--%>
 </head>
 <body>
 
@@ -26,19 +23,13 @@
         <nav id="mainmenu" class="mainmenu">
             <ul>
                 <li class="logo-wrapper">
-                    <a href="index.html">
+                    <a href="/conversion">
                         <img  alt="Conversion Logo">
                     </a>
                 </li>
                 <li>
                     <a href="/conversion">Conversion</a>
                 </li>
-<%--                <li>--%>
-<%--                    <a href="/audioWordList">Word List</a>--%>
-<%--                </li>--%>
-<%--                <li>--%>
-<%--                    <a href="/addAudioWord">Add Word</a>--%>
-<%--                </li>--%>
             </ul>
         </nav>
     </div>
@@ -108,16 +99,6 @@
     </div>
 </div>
 
-<!-- Javascripts -->
-<%--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>--%>
-<%--<script>window.jQuery || document.write('<script src="js/jquery-1.9.1.min.js"><\/script>')</script>--%>
-<%--<script src="js/bootstrap.min.js"></script>--%>
-<%--<script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>--%>
-<%--<script src="js/jquery.fitvids.js"></script>--%>
-<%--<script src="js/jquery.sequence-min.js"></script>--%>
-<%--<script src="js/jquery.bxslider.js"></script>--%>
-<%--<script src="js/main-menu.js"></script>--%>
-<%--<script src="js/template.js"></script>--%>
 
 </body>
 </html>

@@ -1,20 +1,7 @@
 package conversion;
 
-import model.dao.AudioWordDAO;
-import model.entity.audioWord.AudioWord;
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class WordUtils {
     public String mainVariant;
@@ -83,7 +70,7 @@ public class WordUtils {
     }
 
     private WordUtils erOrEdEndingCheck() {
-        if(this.mainVariant != "ed" && this.mainVariant != "er") {
+            if(this.mainVariant != "ed" && this.mainVariant != "er") {
             if (this.mainVariant.endsWith("ed") || this.mainVariant.endsWith("er")) {
                 this.extraVariants.add(this.mainVariant.substring(0, this.mainVariant.length() - 1));
                 this.extraVariants.add(this.mainVariant.substring(0, this.mainVariant.length() - 2));
@@ -118,36 +105,5 @@ public class WordUtils {
                 ", isExist=" + isExist +
                 ", finalWord='" + finalWord + '\'' +
                 '}';
-    }
-
-    public static void main(String[] args) {
-        createRecords();
-    }
-
-    public static void createRecords() {
-        try (Stream<Path> walk = Files.walk(Paths.get("E:\\audioWords\\"))) {
-
-            List<String> result = walk.filter(Files::isRegularFile)
-                    .map(x -> x.toString()).collect(Collectors.toList());
-            List<AudioWord> audioWords = new ArrayList<>();
-            for (String audio:result) {
-                FileInputStream inp = new FileInputStream(audio);
-
-                AudioWord temp = new AudioWord();
-                temp.setExtension(".mp3");
-                temp.setLanguage("English");
-                temp.setWordString(audio.replace("E:\\audioWords\\", "").replaceAll("\\.mp3", ""));
-                temp.setAudioWordStream(inp);
-
-                audioWords.add(temp);
-            }
-            AudioWordDAO dao = new AudioWordDAO();
-            List<ResultSet> sets = dao.insertAudioWords(audioWords);
-            for (ResultSet res : sets) {
-                System.out.println(res);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -2,6 +2,7 @@ package model.dao;
 
 import model.entity.audioWord.AudioWord;
 
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,17 +10,14 @@ import java.util.List;
 import static model.DBManager.getInstance;
 import static model.dao.SQLQuery.*;
 
-public class AudioWordDAO {
+public class AudioWordDAO extends AbstractDAO{
+
     public AudioWord getAudioWord(int id) {
         AudioWord audioWord = new AudioWord();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_AUDIO_WORD_BY_ID);
-            pStatement.setInt(1, id);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_AUDIO_WORD_BY_ID);
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 mapAudioWord(audioWord, resultSet);
             } else {
@@ -29,22 +27,39 @@ public class AudioWordDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         return audioWord;
     }
 
-    public AudioWord getAudioWord(String wordString) {
+    public AudioWord getStandardAudioWord(String wordString) {
         AudioWord audioWord = new AudioWord();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_AUDIO_WORD_BY_WORD_STRING);
-            pStatement.setString(1, wordString);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_AUDIO_WORD_BY_STANDARD);
+            preparedStatement.setString(1, wordString);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                mapAudioWord(audioWord, resultSet);
+            } else {
+                audioWord = null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            close(resultSet);
+            close(preparedStatement);
+        }
+        return audioWord;
+    }
+
+    public AudioWord getAudioWord(String wordString, int createdBy) {
+        AudioWord audioWord = new AudioWord();
+        try {
+            preparedStatement = connection.prepareStatement(SELECT_AUDIO_WORD_BY_USER);
+            preparedStatement.setString(1, wordString);
+            preparedStatement.setInt(2, createdBy);
+            resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 mapAudioWord(audioWord, resultSet);
             } else {
@@ -54,8 +69,7 @@ public class AudioWordDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         return audioWord;
     }
@@ -65,20 +79,17 @@ public class AudioWordDAO {
         audioWord.setLanguage("English");
         audioWord.setExtension(".mp3");
         audioWord.setWordString("aaaa");
-        new AudioWordDAO().insertAudioWord(audioWord);
+        AudioWordDAO audioWordDAO = new AudioWordDAO();
+        audioWordDAO.insertAudioWord(audioWord);
+        audioWordDAO.close();
     }
 
     public List<AudioWord> getAudioWords(List<String> words) {
         List<AudioWord> wordList = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_AUDIO_WORDS_BY_WORD_STRING.replace("?", "(\"" + String.join("\",\"", words) + "\")"));
-            System.out.println(SELECT_AUDIO_WORDS_BY_WORD_STRING.replace("?", "\"" + String.join("\",\"", words) + "\""));
-
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_AUDIO_WORDS_BY_WORD_STRING
+                    .replace("?", "(\"" + String.join("\",\"", words) + "\")"));
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 AudioWord word = new AudioWord();
                 mapAudioWord(word, resultSet);
@@ -88,8 +99,31 @@ public class AudioWordDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
+        }
+        System.out.println(wordList);
+        return wordList;
+    }
+
+    public List<AudioWord> getAudioWords(int created_by, List<String> words, boolean addStandard) {
+        List<AudioWord> wordList = new ArrayList<>();
+        try {
+        String query = addStandard ? SELECT_AUDIO_WORDS_BY_WORD_STRING_AND_USER_OR_STANDARD :
+                SELECT_AUDIO_WORDS_BY_WORD_STRING_AND_USER;
+            preparedStatement = connection.prepareStatement(query
+                    .replace("(?)", "(\"" + String.join("\",\"", words) + "\")"));
+            preparedStatement.setInt(1, created_by);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                AudioWord word = new AudioWord();
+                mapAudioWord(word, resultSet);
+                wordList.add(word);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(resultSet);
+            close(preparedStatement);
         }
         System.out.println(wordList);
         return wordList;
@@ -97,13 +131,9 @@ public class AudioWordDAO {
 
     public List<AudioWord> getAudioWords() {
         List<AudioWord> wordList = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            pStatement = connection.prepareStatement(SELECT_AUDIO_WORDS);
-            resultSet = pStatement.executeQuery();
+            preparedStatement = connection.prepareStatement(SELECT_AUDIO_WORDS);
+            resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 AudioWord word = new AudioWord();
                 mapAudioWord(word, resultSet);
@@ -113,60 +143,64 @@ public class AudioWordDAO {
             e.printStackTrace();
         } finally {
             close(resultSet);
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
         System.out.println(wordList);
         return wordList;
     }
 
-    public List<ResultSet> insertAudioWords(List<AudioWord> audioWords) {
-        List<ResultSet> sets = new ArrayList<>();
-        Connection connection = null;
-        PreparedStatement pStatement = null;
+    public List<AudioWord> getAudioWords(int createdBy) {
+        List<AudioWord> wordList = new ArrayList<>();
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
-            for (AudioWord audioWord : audioWords) {
-                pStatement = connection.prepareStatement(INSERT_AUDIO_WORD, Statement.RETURN_GENERATED_KEYS);
-                pStatement.setString(1, audioWord.getWordString());
-                pStatement.setString(2, audioWord.getLanguage());
-                pStatement.setString(3, audioWord.getExtension());
-                pStatement.setBlob(4, audioWord.getAudioWordStream());
-                pStatement.executeUpdate();
-                sets.add(pStatement.getGeneratedKeys());
+            preparedStatement = connection.prepareStatement(SELECT_AUDIO_WORDS_BY_USER);
+            preparedStatement.setInt(1, createdBy);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                AudioWord word = new AudioWord();
+                mapAudioWord(word, resultSet);
+                wordList.add(word);
             }
-            connection.commit();
         } catch (SQLException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-            }
             e.printStackTrace();
         } finally {
-            close(pStatement);
-            close(connection);
+            close(resultSet);
+            close(preparedStatement);
         }
-        return sets;
+        System.out.println(wordList);
+        return wordList;
     }
 
-    public ResultSet insertAudioWord(AudioWord audioWord) {
-        ResultSet set = null;
-        Connection connection = null;
-        PreparedStatement pStatement = null;
+    public List<AudioWord> getStandardAudioWords() {
+        List<AudioWord> wordList = new ArrayList<>();
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
-            pStatement = connection.prepareStatement(INSERT_AUDIO_WORD, Statement.RETURN_GENERATED_KEYS);
-            pStatement.setString(1, audioWord.getWordString());
-            pStatement.setString(2, audioWord.getLanguage());
-            pStatement.setString(3, audioWord.getExtension());
-            pStatement.setBlob(4, audioWord.getAudioWordStream());
-            pStatement.executeUpdate();
-            set = pStatement.getGeneratedKeys();
+            preparedStatement = connection.prepareStatement(SELECT_AUDIO_WORDS_BY_STANDARD);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                AudioWord word = new AudioWord();
+                mapAudioWord(word, resultSet);
+                wordList.add(word);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(resultSet);
+            close(preparedStatement);
+        }
+        System.out.println(wordList);
+        return wordList;
+    }
+
+    public void insertAudioWords(List<AudioWord> audioWords) {
+        List<ResultSet> sets = new ArrayList<>();
+        try {
+            for (AudioWord audioWord : audioWords) {
+                preparedStatement = connection.prepareStatement(INSERT_AUDIO_WORD, Statement.RETURN_GENERATED_KEYS);
+
+                mapAudioWordInsert(audioWord, preparedStatement);
+
+                preparedStatement.executeUpdate();
+                sets.add(preparedStatement.getGeneratedKeys());
+            }
             connection.commit();
         } catch (SQLException e) {
             if (connection != null) {
@@ -178,25 +212,65 @@ public class AudioWordDAO {
             }
             e.printStackTrace();
         } finally {
-            close(pStatement);
+            close(preparedStatement);
+        }
+    }
+
+    public void insertAudioWord(AudioWord audioWord) {
+        try {
+            preparedStatement = connection.prepareStatement(INSERT_AUDIO_WORD, Statement.RETURN_GENERATED_KEYS);
+
+            mapAudioWordInsert(audioWord, preparedStatement);
+
+            preparedStatement.executeUpdate();
+            resultSet = preparedStatement.getGeneratedKeys();
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        } finally {
+            close(resultSet);
+            close(preparedStatement);
+        }
+    }
+
+    public void updateAudioWord(int audioWordId, InputStream inputStream) {
+        try {
+            preparedStatement = connection.prepareStatement(UPDATE_AUDIO_WORD_BY_ID);
+
+            preparedStatement.setBlob(1, inputStream);
+            preparedStatement.setInt(2, audioWordId);
+
+            preparedStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            e.printStackTrace();
+        } finally {
+            close(preparedStatement);
             close(connection);
         }
-        return set;
     }
 
     public void deleteAudioWord(int audioWord) {
-        Connection connection = null;
-        PreparedStatement pStatement = null;
-        ResultSet resultSet = null;
         try {
-            connection = getInstance().getConnection();
-            connection.setAutoCommit(false);
+            preparedStatement = connection.prepareStatement(DELETE_AUDIO_WORD_BY_ID);
 
-            pStatement = connection.prepareStatement(DELETE_AUDIO_WORD_BY_ID);
+            preparedStatement.setInt(1, audioWord);
 
-            pStatement.setInt(1, audioWord);
-
-            pStatement.executeUpdate();
+            preparedStatement.executeUpdate();
             connection.commit();
         } catch (SQLException e) {
             if (connection != null) {
@@ -208,9 +282,17 @@ public class AudioWordDAO {
             }
             e.printStackTrace();
         } finally {
-            close(pStatement);
-            close(connection);
+            close(preparedStatement);
         }
+    }
+
+    private void mapAudioWordInsert(AudioWord audioWord,  PreparedStatement preparedStatement) throws SQLException {
+        preparedStatement.setString(1, audioWord.getWordString());
+        preparedStatement.setString(2, audioWord.getLanguage());
+        preparedStatement.setString(3, audioWord.getExtension());
+        preparedStatement.setBlob(4, audioWord.getAudioWordStream());
+        preparedStatement.setBoolean(5, audioWord.getStandard());
+        preparedStatement.setInt(6, audioWord.getCreatedBy());
     }
 
     private void mapAudioWord(AudioWord audioWord, ResultSet resultSet) throws SQLException {
@@ -219,15 +301,9 @@ public class AudioWordDAO {
         audioWord.setLanguage(resultSet.getString("language"));
         audioWord.setExtension(resultSet.getString("extension"));
         audioWord.setAudioWordBlob(resultSet.getBlob("audio_word_blob"));
+        audioWord.setStandard(resultSet.getBoolean("is_standard"));
     }
 
-    private void close(AutoCloseable closeable) {
-        if (closeable != null) {
-            try {
-                closeable.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    public AudioWordDAO() {
     }
 }

@@ -3,67 +3,73 @@ package conversion;
 import model.dao.AudioWordDAO;
 import model.entity.audioWord.AudioWord;
 
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.ResultSet;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ConversionHelper {
-    public String convertedText;
-    public List<String> filteredWords;
+    private final String convertedText;
+    private final Map<String, WordUtils> variantsMap = new HashMap<>();
+    private final Set<String> wordSet = new HashSet<>();
+    private final List<WordUtils> wordsUtils = new ArrayList<>();
 
-    public Set<String> wordSet = new HashSet<>();
+    private List<String> filteredWords;
 
-    public List<WordUtils> words = new ArrayList<>();
+    private Map<String, AudioWord> audioWords;
 
-    public Map<String, AudioWord> audioWords;
+    private List<String> unknownWords;
 
-    public Map<String, WordUtils> variantsMap = new HashMap<>();
+    private boolean addStandardAudioWords;
+
+    private int createdBy;
 
     public Map<String, WordUtils> getVariantsMap() {
         return variantsMap;
     }
 
-    public List<WordUtils> getWords() {
-        return words;
+    public List<WordUtils> getWordsUtils() {
+        return wordsUtils;
     }
 
     public Map<String, AudioWord> getAudioWords() {
         return audioWords;
     }
 
-    public List<String> unknownWords;
-
     public List<String> getUnknownWords() {
         return unknownWords;
     }
 
     public void verification() {
-         audioWords = new AudioWordDAO()
-                .getAudioWords(new ArrayList<>(wordSet))
-                .stream()
-                .collect(Collectors.toMap(AudioWord::getWordString, AudioWord::getAudioWord));
+        AudioWordDAO audioWordDAO = new AudioWordDAO();
+        System.out.println(createdBy + "System.out.println(createdBy);");
+        System.out.println(addStandardAudioWords + "System.out.println(addStandardAudioWords);");
+        List<AudioWord> audioWords = audioWordDAO.getAudioWords(createdBy, new ArrayList<>(wordSet), addStandardAudioWords);
 
+        for (AudioWord audioWord : audioWords) {
+            if(!this.audioWords.containsKey(audioWord.getWordString()) ||
+                    this.audioWords.containsKey(audioWord.getWordString()) && !audioWord.getStandard()) {
+                this.audioWords.put(audioWord.getWordString(), audioWord);
+            }
+        }
+
+        audioWordDAO.close();
+        System.out.println(this.audioWords);
         for (String audioWordName : variantsMap.keySet()) {
             WordUtils wordUtils = variantsMap.get(audioWordName);
 
-            if(audioWords.containsKey(wordUtils.mainVariant)) {
+            if(this.audioWords.containsKey(wordUtils.mainVariant)) {
                 wordUtils.isMain = true;
                 wordUtils.isExist = true;
                 wordUtils.finalWord = audioWordName;
             } else {
                 for (String extra : wordUtils.extraVariants) {
-                    if(audioWords.containsKey(extra)) {
+                    if(this.audioWords.containsKey(extra)) {
                         wordUtils.isExist = true;
                         wordUtils.finalWord = extra;
                     }
                 }
             }
+            System.out.println(audioWordName);
+            System.out.println(wordUtils);
         }
 
         this.unknownWords = variantsMap.values()
@@ -81,22 +87,23 @@ public class ConversionHelper {
                 .replaceAll("\\s{2,}", " ");
 
         this.filteredWords = new ArrayList<>();
-        for (String word: filteredString.split(" ")) {
-            filteredWords.add(word);
-        }
+        filteredWords.addAll(Arrays.asList(filteredString.split(" ")));
     }
 
-    public ConversionHelper(String convertedText) {
+    public ConversionHelper(String convertedText, boolean addStandardAudioWords, int createdBy) {
+        this.createdBy = createdBy;
+        this.addStandardAudioWords = addStandardAudioWords;
         this.convertedText = convertedText;
+        this.audioWords = new HashMap<>();
         generateWordList();
 
-        this.wordSet.add("ing");
-        this.wordSet.add("s");
-        this.wordSet.add("ings");
-        this.wordSet.add("ed");
-        this.wordSet.add("es");
-        this.wordSet.add("er");
-        this.wordSet.add("est");
+//        this.wordSet.add("ing");
+//        this.wordSet.add("s");
+//        this.wordSet.add("ings");
+//        this.wordSet.add("ed");
+//        this.wordSet.add("es");
+//        this.wordSet.add("er");
+//        this.wordSet.add("est");
 
         for (String word : filteredWords) {
             if(!variantsMap.containsKey(word)) {
@@ -104,11 +111,12 @@ public class ConversionHelper {
                 variantsMap.put(word, wv);
                 wordSet.add(word);
                 wordSet.addAll(wv.extraVariants);
-                words.add(wv);
+                wordsUtils.add(wv);
             } else {
-                words.add(variantsMap.get(word));
+                wordsUtils.add(variantsMap.get(word));
             }
         }
+        System.out.println(wordSet);
         verification();
     }
 }

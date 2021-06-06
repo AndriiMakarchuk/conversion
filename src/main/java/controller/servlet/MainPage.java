@@ -1,6 +1,8 @@
 package controller.servlet;
 
 import conversion.ConversionHelper;
+import model.entity.user.User;
+
 import java.io.InputStream;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -20,10 +22,17 @@ public class MainPage extends HttpServlet {
             Part part = req.getPart("conversionFile");
             InputStream inputStream = part.getInputStream();
 
-            ConversionHelper conversionHelper = new ConversionHelper(new String(inputStream.readAllBytes()));
+            HttpSession httpSession = req.getSession();
+            User user = (User) httpSession.getAttribute("user");
+            System.out.println("----------------------------------------");
+            System.out.println(req.getParameter("useStandard"));
+            System.out.println("----------------------------------------");
+            boolean useStandard = "on".equals(req.getParameter("useStandard"));
+
+            ConversionHelper conversionHelper = new ConversionHelper(new String(inputStream.readAllBytes()), useStandard,  user.getId());
             inputStream.reset();
 
-            HttpSession httpSession = req.getSession();
+            httpSession.setAttribute("useStandard", useStandard);
             httpSession.setAttribute("inputStream", inputStream);
             httpSession.setAttribute("unknownWords", conversionHelper.getUnknownWords());
             resp.sendRedirect("/addAudioWords");

@@ -11,10 +11,12 @@ public class AudioWord {
     private String wordString;
     private String extension;
     private String language;
+    private int createdBy;
 
     private InputStream audioWordStream;
     private Blob audioWordBlob;
     private String base64;
+    private Boolean isStandard;
 
     public AudioWord getAudioWord() {
         return this;
@@ -73,6 +75,22 @@ public class AudioWord {
 
     public String getBase64() {
         return base64;
+    }
+
+    public Boolean getStandard() {
+        return isStandard;
+    }
+
+    public void setStandard(Boolean standard) {
+        isStandard = standard;
+    }
+
+    public int getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(int createdBy) {
+        this.createdBy = createdBy;
     }
 
     @Override

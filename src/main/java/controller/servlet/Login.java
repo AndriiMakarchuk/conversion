@@ -43,6 +43,7 @@ public class Login extends HttpServlet {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            userDAO.close();
         } catch (SQLException e) {
             errorMessage = "Incorrect login";
         }

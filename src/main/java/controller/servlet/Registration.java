@@ -1,7 +1,6 @@
 package controller.servlet;
 import model.dao.ProfileDAO;
 import model.dao.UserDAO;
-import model.entity.user.Profile;
 import model.entity.user.User;
 import model.entity.user.UserDetails;
 
@@ -10,7 +9,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class Registration extends HttpServlet {
@@ -31,7 +29,9 @@ public class Registration extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        user.setProfile(new ProfileDAO().getProfile("Standard_User"));
+        ProfileDAO profileDAO = new ProfileDAO();
+        user.setProfile(profileDAO.getProfile("Standard_User"));
+        profileDAO.close();
         details.setFirstName(req.getParameter("firstName"));
         details.setLastName(req.getParameter("lastName"));
         details.setEmail(req.getParameter("email"));
@@ -39,7 +39,9 @@ public class Registration extends HttpServlet {
         System.out.println(user);
         System.out.println(details);
         user.setDetails(details);
-        new UserDAO().insertUser(user);
+        UserDAO userDAO = new UserDAO();
+        userDAO.insertUser(user);
+        userDAO.close();
         resp.sendRedirect("/login");
     }
 
