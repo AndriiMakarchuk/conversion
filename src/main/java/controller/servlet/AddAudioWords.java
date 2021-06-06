@@ -15,8 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 public class AddAudioWords extends HttpServlet {
@@ -30,7 +28,6 @@ public class AddAudioWords extends HttpServlet {
 
         if(unknownWords == null || unknownWords.size() == 0) {
             doConversion(req);
-            //req.getSession().setAttribute("inputStream", null);
             resp.sendRedirect("/conversionResult");
         } else {
             RequestDispatcher requestDispatcher = req.getRequestDispatcher("WEB-INF/conversion/addAudioWords.jsp");
@@ -47,7 +44,6 @@ public class AddAudioWords extends HttpServlet {
             }
             doConversion(req);
             req.getSession().setAttribute("unknownWords", null);
-            //req.getSession().setAttribute("inputStream", null);
 
             resp.sendRedirect("/conversionResult");
         }

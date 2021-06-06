@@ -12,15 +12,13 @@ import java.util.*;
 
 public class ConversionTXTToMP3 extends Conversion {
 
-    private Map<String, byte[]> ends = new HashMap<>();
+    private final Map<String, byte[]> ends = new HashMap<>();
 
-    private Map<String, byte[]> contexts = new HashMap<>();
+    private final Map<String, byte[]> contexts = new HashMap<>();
 
-    private String convertedText;
+    private final ConversionHelper helper;
 
-    private ConversionHelper helper;
-
-    private ConversionRecord conversion;
+    private final ConversionRecord conversion;
 
     @Override
     public void convert() {
@@ -32,7 +30,6 @@ public class ConversionTXTToMP3 extends Conversion {
                 for(WordEnd wordEnd : wordEnds) {
                     ends.put(wordEnd.getName(), wordEnd.getEndBlob().getBinaryStream().readAllBytes());
                 }
-//                System.out.println(helper.getAudioWords());
                 for(String word : helper.getAudioWords().keySet()){
                     AudioWord audioWord = helper.getAudioWords().get(word);
                     contexts.put(word, audioWord.getAudioWordBlob().getBinaryStream().readAllBytes());
@@ -77,7 +74,6 @@ public class ConversionTXTToMP3 extends Conversion {
     public ConversionTXTToMP3(ConversionRecord conversion, int createdBy, boolean addStandardAudioWords) throws IOException {
         this.conversion = conversion;
         conversion.getSourceFileStream().reset();
-        convertedText = new String(conversion.getSourceFileStream().readAllBytes());
-        helper = new ConversionHelper(convertedText, addStandardAudioWords, createdBy);
+        helper = new ConversionHelper(new String(conversion.getSourceFileStream().readAllBytes()), addStandardAudioWords, createdBy);
     }
 }

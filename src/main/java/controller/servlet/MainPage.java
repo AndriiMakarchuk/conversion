@@ -18,15 +18,12 @@ public class MainPage extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if(req.getParameter("action").equals("/conversion")) {
+        if(req.getParameter("action").equals("conversion")) {
             Part part = req.getPart("conversionFile");
             InputStream inputStream = part.getInputStream();
 
             HttpSession httpSession = req.getSession();
             User user = (User) httpSession.getAttribute("user");
-            System.out.println("----------------------------------------");
-            System.out.println(req.getParameter("useStandard"));
-            System.out.println("----------------------------------------");
             boolean useStandard = "on".equals(req.getParameter("useStandard"));
 
             ConversionHelper conversionHelper = new ConversionHelper(new String(inputStream.readAllBytes()), useStandard,  user.getId());

@@ -14,17 +14,13 @@ public class ConversionHelper {
 
     private List<String> filteredWords;
 
-    private Map<String, AudioWord> audioWords;
+    private final Map<String, AudioWord> audioWords;
 
     private List<String> unknownWords;
 
-    private boolean addStandardAudioWords;
+    private final boolean addStandardAudioWords;
 
-    private int createdBy;
-
-    public Map<String, WordUtils> getVariantsMap() {
-        return variantsMap;
-    }
+    private final int createdBy;
 
     public List<WordUtils> getWordsUtils() {
         return wordsUtils;
@@ -40,8 +36,6 @@ public class ConversionHelper {
 
     public void verification() {
         AudioWordDAO audioWordDAO = new AudioWordDAO();
-        System.out.println(createdBy + "System.out.println(createdBy);");
-        System.out.println(addStandardAudioWords + "System.out.println(addStandardAudioWords);");
         List<AudioWord> audioWords = audioWordDAO.getAudioWords(createdBy, new ArrayList<>(wordSet), addStandardAudioWords);
 
         for (AudioWord audioWord : audioWords) {
@@ -52,7 +46,6 @@ public class ConversionHelper {
         }
 
         audioWordDAO.close();
-        System.out.println(this.audioWords);
         for (String audioWordName : variantsMap.keySet()) {
             WordUtils wordUtils = variantsMap.get(audioWordName);
 
@@ -68,8 +61,6 @@ public class ConversionHelper {
                     }
                 }
             }
-            System.out.println(audioWordName);
-            System.out.println(wordUtils);
         }
 
         this.unknownWords = variantsMap.values()
@@ -97,14 +88,6 @@ public class ConversionHelper {
         this.audioWords = new HashMap<>();
         generateWordList();
 
-//        this.wordSet.add("ing");
-//        this.wordSet.add("s");
-//        this.wordSet.add("ings");
-//        this.wordSet.add("ed");
-//        this.wordSet.add("es");
-//        this.wordSet.add("er");
-//        this.wordSet.add("est");
-
         for (String word : filteredWords) {
             if(!variantsMap.containsKey(word)) {
                 WordUtils wv = new WordUtils(word);
@@ -116,7 +99,6 @@ public class ConversionHelper {
                 wordsUtils.add(variantsMap.get(word));
             }
         }
-        System.out.println(wordSet);
         verification();
     }
 }
