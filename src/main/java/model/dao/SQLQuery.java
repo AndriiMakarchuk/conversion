@@ -48,17 +48,18 @@ public class SQLQuery {
 
     public static final String SELECT_AUDIO_WORD_BY_ID = "select * from audio_word where id = ?;";
 
-    public static final String SELECT_AUDIO_WORDS_BY_USER = "select * from audio_word where created_by = ? and is_standard = false order by word_string";
-
-    public static final String SELECT_AUDIO_WORD_BY_USER = "select * from audio_word where word_string = ? and created_by = ?;";
+    public static final String SELECT_AUDIO_WORD_BY_USER = "select * from audio_word where word_string = ? and created_by = ? and is_standard = false;";
 
     public static final String SELECT_AUDIO_WORDS_BY_STANDARD = "select * from audio_word where is_standard = true order by word_string";
 
+
+    public static final String SELECT_AUDIO_WORDS_BY_USER = "select * from audio_word where created_by = ? and is_standard = false order by word_string";
+
     public static final String SELECT_AUDIO_WORD_BY_STANDARD = "select * from audio_word where word_string = ? and is_standard = true order by word_string";
 
-    public static final String SELECT_AUDIO_WORDS_BY_WORD_STRING = "select * from audio_word where word_string in ?;";
+    public static final String SELECT_AUDIO_WORDS_BY_WORD_STRING = "select * from audio_word where is_standard = false word_string in ?;";
 
-    public static final String SELECT_AUDIO_WORDS_BY_WORD_STRING_AND_USER = "select * from audio_word where created_by = ? is_standard = false and word_string in (?);";
+    public static final String SELECT_AUDIO_WORDS_BY_WORD_STRING_AND_USER = "select * from audio_word where created_by = ? and is_standard = false and word_string in (?);";
 
     public static final String SELECT_AUDIO_WORDS_BY_WORD_STRING_AND_USER_OR_STANDARD = "select * from audio_word where (created_by = ? or is_standard = true) and word_string in (?);";
 

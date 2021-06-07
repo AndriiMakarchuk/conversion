@@ -37,10 +37,9 @@ public class ConversionHelper {
     public void verification() {
         AudioWordDAO audioWordDAO = new AudioWordDAO();
         List<AudioWord> audioWords = audioWordDAO.getAudioWords(createdBy, new ArrayList<>(wordSet), addStandardAudioWords);
-
+        System.out.println(audioWords);
         for (AudioWord audioWord : audioWords) {
-            if(!this.audioWords.containsKey(audioWord.getWordString()) ||
-                    this.audioWords.containsKey(audioWord.getWordString()) && !audioWord.getStandard()) {
+            if(!this.audioWords.containsKey(audioWord.getWordString()) || !audioWord.getStandard()) {
                 this.audioWords.put(audioWord.getWordString(), audioWord);
             }
         }

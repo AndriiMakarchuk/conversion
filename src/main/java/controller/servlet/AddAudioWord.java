@@ -65,11 +65,12 @@ public class AddAudioWord extends HttpServlet {
         User user = (User) request.getSession().getAttribute("user");
 
         AudioWordDAO audioWordDAO = new AudioWordDAO();
-        AudioWord audioWord = audioWordDAO.getAudioWord(wordName, user.getId());
+        AudioWord audioWord;
+        System.out.println(nameParameter);
         if("standard".equals(nameParameter)) {
-            audioWordDAO.getStandardAudioWord(wordName);
+            audioWord = audioWordDAO.getStandardAudioWord(wordName);
         } else {
-            audioWordDAO.getAudioWord(wordName, user.getId());
+            audioWord = audioWordDAO.getAudioWord(wordName, user.getId());
         }
         System.out.println(audioWord);
         if(audioWord == null) {
