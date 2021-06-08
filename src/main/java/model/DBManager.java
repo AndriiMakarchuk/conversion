@@ -9,14 +9,19 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public final class DBManager {
+    public static boolean isTest = false;
     public static BasicDataSource dataSource = new BasicDataSource();
 
     public static DBManager dbManager;
 
     private DBManager() {
         String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath().replace("java\\model", "resources");
-        String appConfigPath = rootPath + "\\database";
-
+        String appConfigPath;
+        if(isTest) {
+            appConfigPath = rootPath + "\\testDatabase";
+        } else {
+            appConfigPath = rootPath + "\\database";
+        }
         Properties appProps = new Properties();
         try {
             appProps.load(new FileInputStream(appConfigPath));
@@ -32,6 +37,7 @@ public final class DBManager {
     public static synchronized DBManager getInstance() {
         if (dbManager == null) {
             dbManager = new DBManager();
+
         }
         return dbManager;
     }
